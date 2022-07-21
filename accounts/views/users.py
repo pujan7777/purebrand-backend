@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from accounts.models import UserProducts
-from accounts.serializers.users import UserProductSerializer
+from accounts.serializers.users import UserProductSerializer, UserSerializer
 
 
 class UserProductView(generics.ListAPIView):
@@ -19,6 +19,20 @@ class UserProductView(generics.ListAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = UserProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
+class UserProfileView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, *args, **kwargs):
+        return Response(self.serializer_class(request.user).data)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(request.user, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)

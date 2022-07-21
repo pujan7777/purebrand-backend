@@ -39,6 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     deleted_at = models.DateTimeField(default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    complete_profile = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -63,20 +64,25 @@ class UserDetail(models.Model):
     state = models.CharField(max_length=30, blank=True, default="")
     zip_code = models.CharField(max_length=5, validators=[
                                 NUMERIC_VALIDATOR], blank=True, default="")
+    instagram_handle = models.CharField(max_length=30, blank=True, default="")
+    twitter_handle = models.CharField(max_length=30, blank=True, default="")
+    tiktok_handle = models.CharField(max_length=30, blank=True, default="")
+    about_me = models.CharField(max_length=250, blank=True, default="")
 
     def __str__(self):
         return self.user.email
 
 
 class StoreDetails(models.Model):
-    def __str__(self):
-        return self.store_name
 
     user = models.OneToOneField(
         User, related_name="store_profile", on_delete=models.CASCADE)
     store_name = models.CharField(max_length=250)
     min_amount = models.IntegerField(blank=False)
     store_id = models.BigIntegerField(blank=False, unique=True)
+
+    def __str__(self):
+        return self.store_name
 
 
 class UserProducts(models.Model):

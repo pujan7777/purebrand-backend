@@ -18,6 +18,7 @@ class LoginTokenSerializer(TokenObtainPairSerializer):
         data.update({"last_name": self.user.last_name})
         data.update({"email": self.user.email})
         data.update({"uid": self.user.uid})
+        data.update({"complete_profile": self.user.complete_profile})
 
         return data
 

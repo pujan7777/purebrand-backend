@@ -39,7 +39,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     deleted_at = models.DateTimeField(default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    complete_profile = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -68,6 +67,8 @@ class UserDetail(models.Model):
     twitter_handle = models.CharField(max_length=30, blank=True, default="")
     tiktok_handle = models.CharField(max_length=30, blank=True, default="")
     about_me = models.CharField(max_length=250, blank=True, default="")
+    complete_profile = models.BooleanField(default=False)
+    profile_picture = models.ImageField(null=True, blank=True)
 
     def __str__(self):
         return self.user.email

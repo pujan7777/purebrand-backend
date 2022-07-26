@@ -63,20 +63,27 @@ class UserDetail(models.Model):
     state = models.CharField(max_length=30, blank=True, default="")
     zip_code = models.CharField(max_length=5, validators=[
                                 NUMERIC_VALIDATOR], blank=True, default="")
+    instagram_handle = models.CharField(max_length=30, blank=True, default="")
+    twitter_handle = models.CharField(max_length=30, blank=True, default="")
+    tiktok_handle = models.CharField(max_length=30, blank=True, default="")
+    about_me = models.CharField(max_length=250, blank=True, default="")
+    complete_profile = models.BooleanField(default=False)
+    profile_picture = models.ImageField(null=True, blank=True)
 
     def __str__(self):
         return self.user.email
 
 
 class StoreDetails(models.Model):
-    def __str__(self):
-        return self.store_name
 
     user = models.OneToOneField(
         User, related_name="store_profile", on_delete=models.CASCADE)
     store_name = models.CharField(max_length=250)
     min_amount = models.IntegerField(blank=False)
     store_id = models.BigIntegerField(blank=False, unique=True)
+
+    def __str__(self):
+        return self.store_name
 
 
 class UserProducts(models.Model):

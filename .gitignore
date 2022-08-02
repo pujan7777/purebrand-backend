@@ -2,3 +2,6 @@
 .env
 /venv
 /static
+/Purebrands/settings.py
+/media
+db.sqlite3

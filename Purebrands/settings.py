@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -197,11 +198,32 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
 
-MEDIA_URL = '/images/'
+# MEDIA_URL = '/media/'
 
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="")
+AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", default = "")
+AWS_S3_SIGNATURE_VERSION = config("AWS_S3_SIGNATURE_VERSION", default = "")
+AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="")
+# AWS_DEFAULT_ACL = 'public-read'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl' : 'max-age=86400'}
+
+AWS_LOCATION = 'static'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -3,7 +3,7 @@ from django.urls import path, re_path
 
 from accounts.views.login import LoginView, LogoutView, RefreshTokenView
 from accounts.views.signup import SignupView, StoreSignupView, PbAdminSignupView
-from accounts.views.users import RatingView, StoreUserView, UserProductView, UserProfileUpdateView, UserProfileView
+from accounts.views.users import RatingView, ReviewRequestView, StoreUserView, UserProductView, UserProfileUpdateView, UserProfileView
 
 urlpatterns = [
     path('auth/login', LoginView.as_view(), name="login"),
@@ -18,4 +18,5 @@ urlpatterns = [
     path('auth/userupdate', UserProfileUpdateView.as_view(),
          name="user-profile-update"),
     path('auth/ratings', RatingView.as_view(), name="user-ratings"),
+    path('auth/requestreview', ReviewRequestView.as_view(), name="user-request-review"),
 ]

@@ -11,7 +11,7 @@ class SignupSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255)
     confirm_password = serializers.CharField(max_length=255)
     phone_number = serializers.CharField(max_length=15)
-    address = serializers.JSONField()
+    address = serializers.CharField(max_length=255)
     street_number = serializers.CharField(max_length=30)
     city = serializers.CharField(max_length=30)
     state = serializers.CharField(max_length=30)

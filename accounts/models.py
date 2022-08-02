@@ -68,7 +68,7 @@ class UserDetail(models.Model):
     tiktok_handle = models.CharField(max_length=30, blank=True, default="")
     about_me = models.CharField(max_length=250, blank=True, default="")
     complete_profile = models.BooleanField(default=False)
-    profile_picture = models.ImageField(null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_images', null=True, blank=True)
 
     def __str__(self):
         return self.user.email
@@ -89,26 +89,41 @@ class StoreDetails(models.Model):
 class UserProducts(models.Model):
     email = models.EmailField(max_length=250)
     product_id = models.BigIntegerField(blank=False)
+    order_id = models.CharField(blank=False, unique=True,  max_length=250)
     product_name = models.CharField(blank=False, max_length=250)
     store_id = models.BigIntegerField(blank=False)
     price = models.IntegerField(blank=False)
     store_name = models.CharField(max_length=250)
+    product_image = models.CharField(max_length=250,blank="true", default="")
+    user_photo = models.FileField(upload_to="product_images", null=True, blank=True)
+    user_video = models.FileField(upload_to="product_videos", null=True, blank=True)
     accept_status = models.CharField(
         choices=ACCEPT_STATUS_CHOICE, max_length=255, default="PENDING")
     product_description = models.CharField(max_length=250, default="")
     product_rating = models.CharField(
         choices=RATING_STARS, default="ZERO", max_length=250)
     decline_reason = models.CharField(max_length=250, default="None")
+    quality_one = models.IntegerField(blank=False)
+    quality_two = models.IntegerField(blank=False)
+    customer_service = models.CharField(max_length=30)
+    customer_service_answer = models.IntegerField(blank=True)
+    order_one = models.IntegerField(blank=False)
+    order_two = models.IntegerField(blank=False)
+    install_setup = models.IntegerField(blank=False)
+    order_again = models.CharField(max_length=30)
+    receive_product = models.CharField(max_length=30)
+    arrival_time = models.IntegerField(blank=False)
+    damage_rating = models.IntegerField(blank=False)
+    maintenance = models.FloatField(blank=False)
+    feedback = models.CharField(max_length=30)
+    feedback_value = models.CharField(max_length=250)
 
     def __str__(self):
-        return self.email
+        return self.order_id
 
 
-# class ProductImage(models.Model):
-#     product_id = models.ForeignKey(
-#         UserProducts, related_name="product_image", on_delete=models.CASCADE)
-#     image = models.ImageField(upload_to="product/")
-#     size = models.IntegerField(default=0)
 
-#     class Meta:
-#         db_table = 'uploads'
+
+
+
+

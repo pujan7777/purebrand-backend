@@ -1,7 +1,10 @@
 
 from email.policy import default
+from pyexpat import model
 from rest_framework import serializers
+from accounts.constants import ACCEPT_STATUS_CHOICE, RATING_STARS
 from accounts.models import User, UserDetail, UserProducts
+from accounts.utils import GetRatings
 
 
 class UserProductSerializer(serializers.ModelSerializer):
@@ -9,8 +12,13 @@ class UserProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProducts
         fields = ('email', 'product_id', 'product_name', 'store_id',
-                  'price', 'store_name', 'accept_status', 'product_rating', 'product_description')
+                  'price', 'store_name', 'accept_status', 'product_rating', 'product_description', 'decline_reason','product_image', 'user_photo', 'user_video')
 
+
+class StoreReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProducts
+        fields = ('email', 'product_id', 'product_name', 'store_id', 'order_id', 'price', 'store_name', 'accept_status', 'product_rating', 'product_description', 'decline_reason', 'product_image', 'user_photo', 'user_video')
 
 class _UserProfileSerializer(serializers.ModelSerializer):
 
@@ -56,3 +64,20 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "profile_picture": profile_picture
         })
         return userdata
+
+
+
+
+class UserReviewRequest(serializers.ModelSerializer):    
+    
+    class Meta:
+        model = UserProducts
+        fields = ('email', 'product_id', 'product_description', 'product_name', 'store_id', 'order_id', 'price', 'store_name', 'product_image', 'user_photo', 'user_video','product_rating', 'quality_one', 'quality_two', 'customer_service', 'customer_service_answer', 'order_one', 'order_two', 'install_setup', 'order_again', 'receive_product', 'arrival_time', 'damage_rating', 'maintenance', 'feedback', 'feedback_value')
+    
+    def create(self, validated_data):
+        order_id = validated_data.pop("order_id")
+        checkrating = validated_data.copy()
+        product_rating = GetRatings(checkrating)
+        product = UserProducts.objects.create(order_id = order_id, product_rating = product_rating, **validated_data)
+
+        return product

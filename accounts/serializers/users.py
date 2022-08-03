@@ -1,4 +1,3 @@
-
 from email.policy import default
 from pyexpat import model
 from rest_framework import serializers
@@ -8,20 +7,22 @@ from accounts.utils import GetRatings
 
 
 class UserProductSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = UserProducts
         fields = ('email', 'product_id', 'product_name', 'store_id',
-                  'price', 'store_name', 'accept_status', 'product_rating', 'product_description', 'decline_reason','product_image', 'user_photo', 'user_video')
+                  'price', 'store_name', 'accept_status', 'product_rating', 'product_description', 'decline_reason',
+                  'product_image', 'user_photo', 'user_video')
 
 
 class StoreReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProducts
-        fields = ('email', 'product_id', 'product_name', 'store_id', 'order_id', 'price', 'store_name', 'accept_status', 'product_rating', 'product_description', 'decline_reason', 'product_image', 'user_photo', 'user_video')
+        fields = ('email', 'product_id', 'product_name', 'store_id', 'order_id', 'price', 'store_name', 'accept_status',
+                  'product_rating', 'product_description', 'decline_reason', 'product_image', 'user_photo',
+                  'user_video')
+
 
 class _UserProfileSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = UserDetail
         exclude = ('id', 'user')
@@ -42,7 +43,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = UserDetail
         fields = ('profile_picture', 'complete_profile', 'tiktok_handle',
@@ -66,18 +66,19 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return userdata
 
 
-
-
-class UserReviewRequest(serializers.ModelSerializer):    
-    
+class UserReviewRequest(serializers.ModelSerializer):
     class Meta:
         model = UserProducts
-        fields = ('email', 'product_id', 'product_description', 'product_name', 'store_id', 'order_id', 'price', 'store_name', 'product_image', 'user_photo', 'user_video','product_rating', 'quality_one', 'quality_two', 'customer_service', 'customer_service_answer', 'order_one', 'order_two', 'install_setup', 'order_again', 'receive_product', 'arrival_time', 'damage_rating', 'maintenance', 'feedback', 'feedback_value')
-    
+        fields = (
+        'email', 'product_id', 'product_description', 'product_name', 'store_id', 'order_id', 'price', 'store_name',
+        'product_image', 'user_photo', 'user_video', 'product_rating', 'quality_one', 'quality_two', 'customer_service',
+        'customer_service_answer', 'order_one', 'order_two', 'install_setup', 'order_again', 'receive_product',
+        'arrival_time', 'damage_rating', 'maintenance', 'feedback', 'feedback_value')
+
     def create(self, validated_data):
         order_id = validated_data.pop("order_id")
         checkrating = validated_data.copy()
         product_rating = GetRatings(checkrating)
-        product = UserProducts.objects.create(order_id = order_id, product_rating = product_rating, **validated_data)
+        product = UserProducts.objects.create(order_id=order_id, product_rating=product_rating, **validated_data)
 
         return product

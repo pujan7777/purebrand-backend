@@ -4,22 +4,23 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from accounts.models import UserProducts
-from accounts.serializers.users import StoreReviewSerializer, UserProductSerializer, UserReviewRequest, UserSerializer, UserUpdateSerializer
+from accounts.serializers.users import StoreReviewSerializer, UserProductSerializer, UserReviewRequest, UserSerializer, \
+    UserUpdateSerializer
 from accounts.utils import GetRatings
 
 
 class UserProductView(generics.ListAPIView):
     user_product = UserProducts.objects.all()
-    serializer_class = UserProductSerializer(user_product, many=True)
+    serializer_class = UserProductSerializer
     permission_classes = [IsAuthenticated, ]
 
     def get(self, *args, **kwargs):
         queryparam = self.request.query_params.get('email')
-        custom_product = UserProducts.objects.filter(email=queryparam).all()
-        serializer_new = UserProductSerializer(custom_product, many=True)
-        return Response(serializer_new.data)
+        custom_product = UserProducts.objects.filter(email=queryparam)
+        serializer = self.serializer_class(custom_product, many=True)
+        return Response(serializer.data)
 
-    #will be removed after another view is completed
+    # will be removed after another view is completed
     def post(self, request, *args, **kwargs):
         serializer = UserProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -34,14 +35,16 @@ class UserProductView(generics.ListAPIView):
         delete_item.delete()
         return Response("Delete Successful", status=status.HTTP_200_OK)
 
+
 class StoreUserView(generics.ListAPIView):
     permission_classes = [IsAuthenticated, ]
+    serializer_class = StoreReviewSerializer
 
     def get(self, *args, **kwargs):
         queryparam = self.request.query_params.get('store_id')
-        custom_product = UserProducts.objects.filter(store_id=queryparam).all()
-        serializer_new = StoreReviewSerializer(custom_product, many=True)
-        return Response(serializer_new.data)
+        custom_product = UserProducts.objects.filter(store_id=queryparam)
+        serializer = self.serializer_class(custom_product, many=True)
+        return Response(serializer.data)
 
 
 class UserProfileView(generics.ListAPIView):
@@ -71,6 +74,7 @@ class UserProfileUpdateView(APIView):
 
 
 class RatingView(generics.ListAPIView):
+    serializer_class = None
 
     def post(self, request):
         rating = GetRatings(request.data)

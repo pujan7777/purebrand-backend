@@ -17,6 +17,8 @@ from decouple import config, Csv
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from django.urls import reverse_lazy
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -24,12 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY", default='')
+SECRET_KEY = config("DJANGO_SECRET_KEY", default='')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", cast=bool, default=False)
+DEBUG = config("DJANGO_DEBUG", cast=bool, default=False)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', cast=Csv())
 
 
 # Application definition
@@ -50,6 +52,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'storages',
+    'drf_yasg',
+    'django_filters',
+
 ]
 
 MIDDLEWARE = [
@@ -69,7 +74,7 @@ ROOT_URLCONF = 'Purebrands.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,29 +86,28 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'Purebrands.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'purebrand_data',
-#         'USER': 'postgres',
-#         'PASSWORD': 'postgres',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME', default=""),
+        'USER': config('DB_USER', default=""),
+        'PASSWORD': config('DB_PASSWORD', default=""),
+        'HOST': config('DB_HOST', default=""),
+        'PORT': config('DB_PORT', default="")
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -199,12 +203,12 @@ CORS_ORIGIN_WHITELIST = (
 
 
 # STATIC_URL = '/static/'
-
+#
 # MEDIA_URL = '/media/'
-
-
+#
+#
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
+#
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="")
@@ -227,3 +231,40 @@ STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# swagger settings
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'LOGIN_URL': reverse_lazy('login'),
+    'LOGOUT_URL': reverse_lazy('logout'),
+    'PERSIST_AUTH': True,
+    'REFETCH_SCHEMA_WITH_AUTH': True,
+    'REFETCH_SCHEMA_ON_LOGOUT': True,
+    'DEFAULT_INFO': 'PureBrand.swagger.swagger_info',
+    'DEFAULT_API_URL': config('API_URL', 'http://localhost:8000'),
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'in': 'header',
+            'name': 'Authorization',
+            'type': 'apiKey',
+            'description': 'Please pass token as Bearer {{token}}'
+        },
+    },
+    "DEFAULT_PAGINATOR_INSPECTORS": [
+        'drf_yasg.inspectors.DjangoRestResponsePagination',
+        'drf_yasg.inspectors.CoreAPICompatInspector',
+    ],
+    # default inspector classes, see advanced documentation
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'drf_yasg.inspectors.SwaggerAutoSchema',
+    'DEFAULT_FIELD_INSPECTORS': [
+        'drf_yasg.inspectors.CamelCaseJSONFilter',
+        'drf_yasg.inspectors.InlineSerializerInspector',
+        'drf_yasg.inspectors.RelatedFieldInspector',
+        'drf_yasg.inspectors.ChoiceFieldInspector',
+        'drf_yasg.inspectors.FileFieldInspector',
+        'drf_yasg.inspectors.DictFieldInspector',
+        'drf_yasg.inspectors.SimpleFieldInspector',
+        'drf_yasg.inspectors.StringDefaultFieldInspector',
+    ],
+}
